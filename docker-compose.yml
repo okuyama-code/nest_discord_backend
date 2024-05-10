@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres:12.1
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - 6379:6379
+
+volumes:
+  my_postgres_data:
+
+
+# アプリケーションでは、これらの2つのデータベースを組み合わせて使用することが一般的です。例えば、以下のようなシナリオが考えられます：
+
+# ユーザー情報や注文情報などの永続的なデータはPostgreSQLに格納する。
+# よく使用されるデータやセッション情報などの一時的なデータはRedisにキャッシュとして保存する。
+# リアルタイム通信やメッセージングにはRedisのパブリッシュ/サブスクライブ機能を利用する。
