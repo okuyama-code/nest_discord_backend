@@ -10,7 +10,7 @@ docker compose upをした後に
 npx prisma migrate dev --name init
 ```
 
-参考ページ
+prisma関連の構築の参考ページ
 https://docs.nestjs.com/recipes/prisma
 
 ##　プロセスID（PID）を切るコマンド
@@ -20,6 +20,7 @@ sudo kill PID番号
 ```
 
 実際にデータベース内にテーブルが作成されているのか確認するため、Prisma Studioを以下コマンドで立ち上げます。
+カラムなどを確認する
 ```
 npx prisma studio
 ```
