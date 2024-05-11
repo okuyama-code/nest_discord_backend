@@ -51,3 +51,15 @@ npm i graphql-upload@^14.0.0
 
 参考ドキュメント
 https://docs.nestjs.com/graphql/quick-start
+
+http://localhost:3000/graphql
+
+## nestjs コーディング編
+### server
+```
+nest g service server
+```
+Nest.js の GraphQL リゾルバーは、GraphQL クエリやミューテーションに対して実際のデータを取得、変更、または削除するロジックを定義する場所です。リゾルバーは、GraphQL スキーマで定義されたフィールドに対応しています。
+```
+ nest g resolver server
+```
