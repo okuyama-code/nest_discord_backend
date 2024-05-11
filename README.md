@@ -18,3 +18,9 @@ https://docs.nestjs.com/recipes/prisma
 sudo lsof -i:5432
 sudo kill PID番号
 ```
+
+実際にデータベース内にテーブルが作成されているのか確認するため、Prisma Studioを以下コマンドで立ち上げます。
+```
+npx prisma studio
+```
+自動でPrisma Studioが立ち上がり、作成したデータベースを選択すると、空のテーブルが作成されていることを確認できます。
