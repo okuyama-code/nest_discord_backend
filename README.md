@@ -63,3 +63,11 @@ Nest.js の GraphQL リゾルバーは、GraphQL クエリやミューテーシ�
 ```
  nest g resolver server
 ```
+
+### profile member
+```
+nest g module profile
+```
+```
+nest g module member
+```
