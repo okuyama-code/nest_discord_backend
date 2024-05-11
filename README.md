@@ -34,3 +34,20 @@ npx prisma generate
 
 参考
 https://rit-inc.hatenablog.com/entry/2022/04/11/180722
+
+
+## GraphQL 編
+```
+npm i @nestjs/graphql @nestjs/apollo @apollo/server graphql
+```
+このパッケージを使用すると、画像、CSS ファイル、JavaScript ファイルなどの静的アセットを簡単に配信できます。
+```
+npm i @nestjs/serve-static
+```
+
+```
+npm i graphql-upload@^14.0.0
+```
+
+参考ドキュメント
+https://docs.nestjs.com/graphql/quick-start
