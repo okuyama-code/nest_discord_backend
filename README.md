@@ -64,10 +64,24 @@ Nest.js の GraphQL リゾルバーは、GraphQL クエリやミューテーシ�
  nest g resolver server
 ```
 
-### profile member
+### profile
 ```
 nest g module profile
 ```
 ```
+nest g service profile
+```
+```
+nest g resolver  profile
+```
+profile/dto.tsを作成したタイミングでinstallした
+```
+ npm i class-validator
+```
+
+
+### member
+```
 nest g module member
 ```
+
