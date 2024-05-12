@@ -85,3 +85,11 @@ profile/dto.tsを作成したタイミングでinstallした
 nest g module member
 ```
 
+### auth
+2:30:00 ~ 2:39:40
+https://www.youtube.com/watch?app=desktop&v=OsDW_ulfhdY&t=9645s
+auth.guard.tsで使用
+NestJS の GraphQL 用の認証ガードについて説明します。認証ガードは、GraphQL のリゾルバにアクセスする前に、ユーザーが認証されているかどうかを確認するために使用されます。
+```
+npm i @nestjs/jwt
+```

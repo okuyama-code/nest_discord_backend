@@ -2,6 +2,8 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Profile } from './profile.type';
 import { CreateProfileDto } from './dto';
 import { ProfileService } from './profile.service';
+import { UseGuards } from '@nestjs/common';
+import { GraphqlAuthGuard } from 'src/auth/auth.guard';
 
 // @Resolver デコレータは、このクラスが GraphQL のリゾルバであることを示します
 @Resolver()
@@ -11,6 +13,7 @@ export class ProfileResolver {
 
   // @Mutation デコレータは、このメソッドが GraphQL のミューテーションであることを示します
   // () => Profile は、このミューテーションの戻り値の型が Profile であることを示します
+  @UseGuards(GraphqlAuthGuard)
   @Mutation(() => Profile)
   async createProfile(
     // @Args デコレータは、GraphQL のミューテーションの引数を指定します
