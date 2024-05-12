@@ -39,4 +39,24 @@ export class ProfileService {
       }
     });
   }
+
+  async getProfileByEmail(email: string) {
+    // 指定された ID のプロファイルを取得する
+    return this.prisma.profile.findUnique({
+      // 検索条件を指定する
+      where: {
+        email,
+      },
+      include: {
+        servers: {
+          include: {
+            channels: true,
+          }
+        }
+      }
+    });
+  }
+
+
+
 }
