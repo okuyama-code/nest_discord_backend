@@ -3,6 +3,8 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateServerDto } from './dto';
 import { v4 as uuidv4 } from 'uuid';
 import { MemberRole } from 'src/member/member.types';
+import { ApolloError } from 'apollo-server-express';
+
 
 @Injectable()
 export class ServerService {
@@ -41,6 +43,66 @@ export class ServerService {
       },
       include: {
         members: true,
+      },
+    });
+  }
+
+  async getServer(id: number, email: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { email },
+    });
+
+    if (!profile)
+      return new ApolloError('Profile not found', 'PROFILE_NOT_FOUND');
+
+    const server = await this.prisma.server.findUnique({
+      where: {
+        id,
+        members: {
+          some: {
+            profileId: profile.id,
+          },
+        },
+      },
+      include: {
+        channels: true,
+        members: {
+          include: {
+            profile: true,
+            server: true,
+          },
+        },
+      },
+    });
+    if (!server) return new ApolloError('Server not found', 'SERVER_NOT_FOUND');
+    return server;
+  }
+
+  async getServersByProfileEmailOfMember(email: string) {
+    console.log(
+      email,
+      await this.prisma.server.findMany({
+        where: {
+          members: {
+            some: {
+              profile: {
+                email,
+              },
+            },
+          },
+        },
+      }),
+    );
+    // 指定されたメールアドレスを持つプロファイルが所属するサーバーを取得
+    return await this.prisma.server.findMany({
+      where: {
+        members: {
+          some: {
+            profile: {
+              email,
+            },
+          },
+        },
       },
     });
   }
