@@ -11,6 +11,7 @@
 コード例では、ProfileResolver クラスに @Resolver() デコレータが使用されており、その中で @Mutation(() => Profile) が定義されています。これは、GraphQL のミューテーションを処理するリゾルバ関数を示しています。
 
 ### QueryとMutationとは？
+データ取得の「query」、データ更新の「mutation」の２種類に分類分けされます。
 https://qiita.com/nys9302/items/18962c96c8d111e38d85
 Query → SELECT分に使える. RESTでGETと該当
 Mutation → INSERT, UPDATE, DELETEに使える。RESTではPOST,PUT,PATCH,DELETEに該当

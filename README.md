@@ -58,6 +58,9 @@ http://localhost:3000/graphql
 ## nestjs コーディング編
 ### server
 ```
+nest g module server
+```
+```
 nest g service server
 ```
 Nest.js の GraphQL リゾルバーは、GraphQL クエリやミューテーションに対して実際のデータを取得、変更、または削除するロジックを定義する場所です。リゾルバーは、GraphQL スキーマで定義されたフィールドに対応しています。
