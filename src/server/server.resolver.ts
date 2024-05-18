@@ -1,9 +1,9 @@
-import { Args, Context, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Server } from './types';
 import { Request } from 'express';
 import { ApolloError } from 'apollo-server-express';
 import { ServerService } from './server.service';
-import { UseGuards } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { GraphqlAuthGuard } from 'src/auth/auth.guard';
 import { CreateServerDto } from './dto';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
@@ -12,7 +12,7 @@ import { join } from 'path';
 import { createWriteStream, existsSync, mkdirSync } from 'fs';
 
 
-
+@Injectable()
 @UseGuards(GraphqlAuthGuard)
 @Resolver()
 export class ServerResolver {
@@ -30,6 +30,7 @@ export class ServerResolver {
     );
   }
 
+  @Mutation(() => Server)
   async createServer(
     @Args('input') input: CreateServerDto,
     @Args('file', { type: () => GraphQLUpload, nullable: true })
