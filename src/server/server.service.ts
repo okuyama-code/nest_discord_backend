@@ -1,11 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateServerDto } from './dto';
 import { v4 as uuidv4 } from 'uuid';
 import { MemberRole } from 'src/member/member.types';
 import { ApolloError } from 'apollo-server-express';
-
-
+import { CreateServerDto } from './dto';
 @Injectable()
 export class ServerService {
   constructor(private readonly prisma: PrismaService) {}
@@ -16,7 +14,7 @@ export class ServerService {
         id: input.profileId,
       },
     });
-    if (!profile) throw new BadRequestException('Profile not found')
+    if (!profile) throw new BadRequestException('Profile not found');
 
     return this.prisma.server.create({
       data: {
@@ -41,6 +39,7 @@ export class ServerService {
           ],
         },
       },
+
       include: {
         members: true,
       },
@@ -93,7 +92,6 @@ export class ServerService {
         },
       }),
     );
-    // 指定されたメールアドレスを持つプロファイルが所属するサーバーを取得
     return await this.prisma.server.findMany({
       where: {
         members: {
@@ -105,5 +103,214 @@ export class ServerService {
         },
       },
     });
+  }
+  async updateServerWithNewInviteCode(serverId: number) {
+    const server = await this.prisma.server.findUnique({
+      where: {
+        id: serverId,
+      },
+    });
+
+    if (!server) throw Error('Server not found');
+
+    return this.prisma.server.update({
+      where: {
+        id: serverId,
+      },
+      data: {
+        inviteCode: uuidv4(),
+      },
+    });
+  }
+
+  async leaveServer(serverId: number, email: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        email,
+      },
+    });
+    console.log('serverId69', serverId, email);
+    if (!profile) throw new Error('Profile not found');
+    return this.prisma.server.update({
+      where: {
+        id: serverId,
+      },
+      data: {
+        members: {
+          deleteMany: {
+            profileId: profile.id,
+          },
+        },
+      },
+    });
+  }
+
+  async deleteServer(serverId: number, email: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!profile) throw new Error('Profile not found');
+
+    const server = await this.prisma.server.findUnique({
+      where: {
+        id: serverId,
+        members: {
+          some: {
+            profileId: profile.id,
+            role: {
+              in: [MemberRole.ADMIN],
+            },
+          },
+        },
+      },
+    });
+
+    if (!server) throw new Error('Server not found');
+    await this.prisma.server.delete({
+      where: {
+        id: serverId,
+      },
+    });
+
+    return 'Server deleted successfully';
+  }
+
+  async deleteChannelFromServer(channelId: number, email: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!profile) throw new Error('Profile not found');
+    const channel = await this.prisma.channel.findUnique({
+      where: {
+        id: channelId,
+        profileId: profile.id,
+        NOT: {
+          name: 'general',
+        },
+      },
+    });
+
+    if (!channel) throw new Error('Channel not found');
+    await this.prisma.channel.delete({
+      where: {
+        id: channelId,
+      },
+    });
+    return 'Channel deleted successfully';
+  }
+
+  async addMemberToServer(inviteCode: string, email: string) {
+    const server = await this.prisma.server.findUnique({
+      where: {
+        inviteCode,
+      },
+    });
+    if (!server) throw new Error('Server not found');
+
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!profile) throw new Error('Profile not found');
+
+    const member = await this.prisma.member.findFirst({
+      where: {
+        serverId: server.id,
+        profileId: profile.id,
+      },
+    });
+
+    if (member) return new Error('Member already exists');
+
+    return this.prisma.server.update({
+      where: {
+        inviteCode,
+      },
+      data: {
+        members: {
+          create: [
+            {
+              profileId: profile.id,
+            },
+          ],
+        },
+      },
+    });
+  }
+
+  async changeMemberRole(memberId, role: MemberRole, email: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!profile) throw new Error('Profile not found');
+    const member = await this.prisma.member.findUnique({
+      where: { id: memberId },
+    });
+    if (!member) throw new Error('Member not found');
+    await this.prisma.member.update({
+      where: {
+        id: member.id,
+        NOT: {
+          profileId: member.id,
+        },
+      },
+      data: {
+        role: MemberRole[role],
+      },
+    });
+    const server = await this.prisma.server.findUnique({
+      where: {
+        id: member.serverId,
+      },
+      include: {
+        members: true,
+      },
+    });
+    if (!server) throw new Error('Server not found');
+    return server;
+  }
+
+  async deleteMember(memberId: number, email) {
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!profile) throw new Error('Profile not found');
+    const member = await this.prisma.member.findUnique({
+      where: {
+        id: memberId,
+      },
+    });
+    await this.prisma.member.delete({
+      where: {
+        id: member.id,
+        NOT: {
+          profileId: profile.id,
+        },
+      },
+    });
+    const server = await this.prisma.server.findUnique({
+      where: {
+        id: member.serverId,
+      },
+      include: {
+        members: {
+          include: {
+            profile: true,
+          },
+        },
+      },
+    });
+    if (!server) throw new Error('Server not found');
+    return server;
   }
 }

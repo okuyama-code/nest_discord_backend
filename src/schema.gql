@@ -50,8 +50,15 @@ enum MemberRole {
 }
 
 type Mutation {
+  addMemberToServer(inviteCode: String!): Server!
+  changeMemberRole(memberId: Float, role: String!): Server!
   createProfile(input: CreateProfileDto!): Profile!
   createServer(file: Upload, input: CreateServerDto!): Server!
+  deleteChannelFromServer(channelId: Float): String!
+  deleteMember(memberId: Float): Server!
+  deleteServer(serverId: Float): String!
+  leaveServer(serverId: Float): String!
+  updateServerWithNewInviteCode(serverId: Float): Server!
 }
 
 type Profile {
@@ -65,7 +72,8 @@ type Profile {
 
 type Query {
   getProfileById(profileId: Float!): Profile!
-  getServers(profileId: Float!): [Server!]!
+  getServer(id: Float): Server!
+  getServers: [Server!]!
 }
 
 type Server {
